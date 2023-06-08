@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         maxWidth: '100%',
         
-
     },
 
     textDescription: {

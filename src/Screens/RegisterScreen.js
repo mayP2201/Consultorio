@@ -9,21 +9,23 @@ import { useState } from 'react';
 
 const Register = ({ navigation }) => {
     const [name, setName] = useState();
-    const [errorName, setErrorName] = useState();
-    const [lastName, setLastName] = useState();
-    const [errorLastName, setErrorLastName] = useState();
-    const [email, setEmail] = useState();
-    const [errorEmail, setErrorEmail] = useState();
-    const [phone, setPhone] = useState();
-    const [errorPhone, setErrorPhone] = useState();
-    const [password, setPassword] = useState();
-    const [errorPassword, setErrorPassword] = useState();
-    const [confirmPassword, setconfirmPassword] = useState();
-    const [errorConfirmPassword, setErrorConfirmPassword] = useState();
-    const [id, setId] = useState();
-    const [errorId, setErrorId] = useState();
+    const [errorName, setErrorName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [errorLastName, setErrorLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [errorEmail, setErrorEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [errorPhone, setErrorPhone] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorPassword, setErrorPassword] = useState("");
+    const [confirmPassword, setconfirmPassword] = useState("");
+    const [errorMathPassword, setErrorMathPassword] = useState("");
+    const [id, setId] = useState("");
+    const [errorId, setErrorId] = useState("");
     const [iconVisibility, setIconVisibility] = useState(true);
     const [iconVisibility1, setIconVisibility1] = useState(true);
+    let valid = false;
+    let hasCoinciden = true;
 
     passwordVisibility = () => {
         setIconVisibility(!iconVisibility);
@@ -114,25 +116,80 @@ const Register = ({ navigation }) => {
         } else if (!specialCaracter(password)) {
             setErrorPassword(messages.PASSWORD_CARACTER);
         } else {
+            setErrorMathPassword(messages.PASSWORDS_DONT_MATCH);
             setErrorPassword(null);
+
         }
         setPassword(password);
     }
 
     const confirmOfPassword = (confirmPassword) => {
-        if (confirmPassword.length < 8) {
-            setErrorConfirmPassword(messages.PASSWORD_MIN);
-        } else if (!number(confirmPassword)) {
-            setErrorConfirmPassword(messages.PASSWORD_NUMBER);
-        } else if (!letter(confirmPassword)) {
-            setErrorConfirmPassword(messages.PASSWORD_LETTER);
-        } else if (!specialCaracter(confirmPassword)) {
-            setErrorConfirmPassword(messages.PASSWORD_CARACTER);
-        } else {
-            setErrorConfirmPassword(null);
-        }
         setconfirmPassword(confirmPassword);
+        matchPassword(password, confirmPassword);
     }
+
+    const matchPassword = (value1, value2) => {
+        if (value1 == value2) {
+            setErrorMathPassword(null);
+        }
+        else {
+            setErrorMathPassword(messages.PASSWORDS_DONT_MATCH);
+        }
+    }
+
+    const register = () => {
+
+        setErrorName("");
+        setErrorLastName("");
+        setErrorEmail("");
+        setErrorPhone("");
+        setErrorPassword("");
+        setErrorMathPassword("");
+        validate();
+        if (!valid) {
+            if (hasCoinciden) {
+                console.log("Guardando....");
+                goToLogin();
+
+            }
+        }
+    };
+
+    const validate = () => {
+
+        if (name == "") {
+            setErrorName(messages.INCORRECT_NAME);
+            valid = true;
+        }
+        if (lastName == "") {
+            setErrorLastName(messages.INCORRECT_LASTNAME);
+            valid = true;
+        }
+        if (phone == "") {
+            setErrorPhone(messages.PHONE_INCORRECT);
+            valid = true;
+        }
+        if (email == "") {
+            setErrorEmail(messages.EMAIL_INCORRECT);
+            valid = true;
+        }
+        if (password == "") {
+            setErrorPassword(messages.PASSWORDS_NOTSECURITY);
+            valid = true;
+        }
+        if (confirmPassword != password) {
+            setErrorMathPassword(messages.PASSWORDS_DONT_MATCH);
+            valid = true;
+            hasCoinciden = false;
+        }
+    };
+
+
+
+    const goToLogin = () => {
+        // navigation.navigate("Login");
+        console.log("Ir a Login");
+    };
 
     return (
         <Principal>
@@ -146,6 +203,7 @@ const Register = ({ navigation }) => {
                             labelStyle={[commonStyles.titleInput, { marginLeft: 0 }]}
                             placeholder="Tus nombres"
                             value={name}
+                            // onChangeText={(text) => { verifyName(text) }}
                             onChangeText={verifyName}
                             leftIcon={
                                 <Icon name="user" type="antdesign" size={30} color={colors.blue} />
@@ -250,14 +308,14 @@ const Register = ({ navigation }) => {
                             }
                             maxLength={75}
                             secureTextEntry={iconVisibility1}
-                             rightIcon={
+                            rightIcon={
                                 <Icon
                                     onPress={passwordVisibility1}
                                     type="feather"
                                     name={iconVisibility1 ? "eye-off" : "eye"}
                                 />
                             }
-                            errorMessage={(errorConfirmPassword ? errorConfirmPassword : "")}
+                            errorMessage={(errorMathPassword ? errorMathPassword : "")}
                             errorStyle={commonStyles.errorStyle}
                         />
                     </View>
@@ -267,6 +325,7 @@ const Register = ({ navigation }) => {
                             buttonStyle={{ backgroundColor: colors.violet }}
                             containerStyle={commonStyles.introButton}
                             titleStyle={commonStyles.fontButton}
+                            onPress={register}
 
                         />
                     </View>
